@@ -63,7 +63,7 @@ export class LoanCalculatorComponent implements OnInit {
   public isLoading: boolean = false;
   public errorMessage: string | null = null;
   public loanForm!: FormGroup;
-  public displayedColumns: string[] = ['date', 'installmentNumber', 'taxValue', 'paidDebtValue', 'remainingBalance'];
+  public displayedColumns: string[] = ['date', 'installmentNumber', 'taxValue', 'paidDebtValue', 'total', 'remainingBalance'];
 
 
 
