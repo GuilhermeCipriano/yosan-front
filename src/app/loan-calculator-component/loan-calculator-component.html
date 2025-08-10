@@ -1,0 +1,137 @@
+<style>
+  .spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+  }
+</style>
+
+<div class="container">
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>Simulação de Empréstimo</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="loanForm" (ngSubmit)="calculateLoan()">
+        <div class="form-grid">
+
+          <mat-form-field appearance="outline">
+            <mat-label>Valor do Empréstimo</mat-label>
+            <input matInput id="loanValue" type="text" formControlName="loanValue" placeholder="R$0,00"
+                   mask="separator.2" prefix="R$ " thousandsSeparator="." decimalMarker="," [leadZero]="true"
+                   [allowNegativeNumbers]="false"/>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Taxa de Juros Anual (%)</mat-label>
+            <input matInput id="taxRate" type="text" formControlName="taxRate" placeholder="Ex: 7.5%"
+                   [decimalMarker]="','" mask="percent.2" suffix="%" [allowNegativeNumbers]="false">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Data do Contrato</mat-label>
+            <input matInput id="initialDate" type="text" formControlName="initialDate" placeholder="dd/mm/aaaa"
+                   mask="d0/M0/0000">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Data de Início de Pagamento</mat-label>
+            <input matInput id="firstPaymentDate" type="text" formControlName="firstPaymentDate"
+                   placeholder="dd/mm/aaaa"
+                   mask="d0/M0/0000">
+
+            @if (loanForm.get('firstPaymentDate')?.hasError('required')) {
+              <mat-error>This field is mandatory.</mat-error>
+            }
+
+            @if (loanForm.get('firstPaymentDate')?.hasError('pattern')) {
+              <mat-error>Plese fill the field completely</mat-error>
+            }
+            @if (loanForm.get('firstPaymentDate')?.hasError('dateOrder')) {
+              <mat-error>{{ loanForm.get('firstPaymentDate')?.getError('dateOrder') }}</mat-error>
+            }
+
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Data Final</mat-label>
+            <input matInput id="endDate" type="text" formControlName="endDate" placeholder="dd/mm/aaaa"
+                   mask="d0/M0/0000">
+            @if (loanForm.get('endDate')?.hasError('required')) {
+              <mat-error>This field is mandatory.</mat-error>
+            }
+
+            @if (loanForm.get('endDate')?.hasError('pattern')) {
+              <mat-error>Plese fill the field completely</mat-error>
+            }
+
+            @if (loanForm.get('endDate')?.hasError('dateOrder')) {
+              <mat-error>{{ loanForm.get('endDate')?.getError('dateOrder') }}</mat-error>
+            }
+          </mat-form-field>
+
+        </div>
+
+        <div class="actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="loanForm.invalid || isLoading">
+            @if (isLoading) {
+              <span>Processando...</span>
+            } @else {
+              <span>Calcular Simulação</span>
+            }
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="results-area">
+    @if (isLoading) {
+      <div class="spinner-container">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+      </div>
+    } @else if (errorMessage) {
+      <p class="error-state">{{ errorMessage }}</p>
+    } @else if (responseData) {
+      <h3>Remaining Installments</h3>
+      <div class="table-container">
+        <table mat-table [dataSource]="responseData.installmentList" class="mat-elevation-z8">
+
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef> Date</th>
+            <td mat-cell *matCellDef="let installment"> {{ installment.date }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="installmentNumber">
+            <th mat-header-cell *matHeaderCellDef> Installment Number</th>
+            <td mat-cell *matCellDef="let installment"> {{ installment.installmentNumber }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="taxValue">
+            <th mat-header-cell *matHeaderCellDef> Paid Debt</th>
+            <td mat-cell *matCellDef="let installment"> {{ installment.paidDebtValue | currency:'BRL' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="paidDebtValue">
+            <th mat-header-cell *matHeaderCellDef> Taxes</th>
+            <td mat-cell *matCellDef="let installment"> {{ installment.taxValue | currency:'BRL' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="remainingBalance">
+            <th mat-header-cell *matHeaderCellDef> Remaining Balance</th>
+            <td mat-cell *matCellDef="let installment"> {{ installment.remainingBalance | currency:'BRL' }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        </table>
+      </div>
+
+    }
+  </div>
+
+</div>
