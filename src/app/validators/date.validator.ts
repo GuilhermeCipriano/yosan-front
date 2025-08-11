@@ -6,7 +6,6 @@ export function dateOrderValidator(
   firstPaymentDateControlName: string
 ): ValidatorFn {
   return (group: AbstractControl): ValidationErrors | null => {
-    console.log('Validador de data executado!');
 
     const initialDateControl = group.get(initialDateControlName);
     const endDateControl = group.get(endDateControlName);
@@ -35,29 +34,18 @@ export function dateOrderValidator(
     const initialDate = parseDate(initialDateControl.value);
     const endDate = parseDate(endDateControl.value);
     const firstPaymentDate = parseDate(firstPaymentDateControl.value);
-    console.log('Data Inicial Parseada:', initialDate);
-    console.log('Data Final Parseada:', endDate);
 
     if (!initialDate) {
-
       return null;
     }
 
-    // Validação da Data Final
     if (endDate && endDate < initialDate) {
-      console.log(`Comparação: A data final (${endDate.toLocaleDateString()}) é menor que a inicial (${initialDate.toLocaleDateString()})?`, endDate < initialDate);
-
-      // Seta o erro no controle específico para podermos mostrar a mensagem no campo certo
       endDateControl.setErrors({ 'dateOrder': 'The end date cannot be earlier than the start date..' });
     } else if (endDateControl.hasError('dateOrder')) {
       // Limpa o erro se a condição for resolvida
       endDateControl.setErrors(null);
     }
-
-    // Validação da Data do Primeiro Pagamento
     if (firstPaymentDate && firstPaymentDate < initialDate) {
-      console.error('ERRO DETECTADO: Data final é inválida!'); // <-- LOG DE ERRO
-
       firstPaymentDateControl.setErrors({ 'dateOrder': 'The first payment cannot be made before the start date.' });
     } else if (firstPaymentDateControl.hasError('dateOrder')) {
       firstPaymentDateControl.setErrors(null);
