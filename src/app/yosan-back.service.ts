@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpResponse} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {LoanRequest} from './loan-calculator-component/LoanRequest';
 import {LoanResponse} from './loan-calculator-component/LoanResponse';
@@ -15,10 +15,10 @@ export class YosanBackService {
 
   }
 
-  calculateLoan(loanRequest: LoanRequest): Observable<LoanResponse> {
-    console.log("Enviando para o backend:", loanRequest); // Verifique se o objeto aparece corretamente no console do navegador
+  calculateLoan(loanRequest: LoanRequest): Observable<HttpResponse<LoanResponse>> {
+    console.log("Sending to backend:", loanRequest);
 
-    return this.http.post<LoanResponse>(this.uri + this.sac_loan_uri, loanRequest);
+    return this.http.post<LoanResponse>(this.uri + this.sac_loan_uri, loanRequest, {observe: 'response'});
   }
 
 }

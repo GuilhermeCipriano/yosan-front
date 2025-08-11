@@ -21,3 +21,20 @@
 .mat-column-right {
   text-align: right;
 }
+
+.error-card {
+  margin-top: 1.5rem;
+  background-color: #fff0f0;
+  color: #c51104;
+  padding: 1.5rem;
+}
+
+.error-content {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px !important;
+}
+
+.error-content mat-icon {
+  margin-right: 8px;
+}

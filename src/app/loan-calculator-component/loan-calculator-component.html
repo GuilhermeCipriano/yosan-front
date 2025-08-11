@@ -84,7 +84,12 @@
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
       </div>
     } @else if (errorMessage) {
-      <p class="error-state">{{ errorMessage }}</p>
+      <mat-card color="warn" class="error-card">
+        <mat-card-content class="error-content">
+          <mat-icon>error</mat-icon>
+          <span>{{ errorMessage }}</span>
+        </mat-card-content>
+      </mat-card>
     } @else if (responseData) {
       <h3>Remaining Installments</h3>
       <div class="table-container">

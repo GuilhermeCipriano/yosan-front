@@ -16,6 +16,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import {dateOrderValidator} from '../validators/date.validator';
+import {MatIconModule} from '@angular/material/icon';
 
 
 function toISODate(dateString: string | null | undefined): string {
@@ -52,6 +53,7 @@ function toISODate(dateString: string | null | undefined): string {
     MatTableModule,
     MatProgressSpinnerModule,
     MatCardModule,
+    MatIconModule
   ],
   templateUrl: './loan-calculator-component.html',
   styleUrl: './loan-calculator-component.css'
@@ -111,11 +113,25 @@ export class LoanCalculatorComponent implements OnInit {
 
     this.yosanBackService.calculateLoan(loanRequest).subscribe({
       next: (response) => {
-        this.responseData = response;
+        console.log(response);
+        if(response.status == 200 && response.body) {
+          this.responseData = response.body;
+        } else {
+          this.errorMessage = `Server error, please try again: ${response.statusText}`;
+        }
         this.isLoading = false;
       },
-      error: (erro) => {
-        this.errorMessage = 'Não foi possível carregar os dados do empréstimo. Por favor, tente novamente mais tarde.';
+      error: (error) => {
+        if(error.status === 400) {
+          this.errorMessage = 'Invalid data was sent. Please fill the form again.';
+        }
+        else if(error.status === 500) {
+          this.errorMessage = 'An unexpected error happend. Please, try again later.';
+        }
+        else {
+          this.errorMessage = error.message;
+        }
+        this.errorMessage = 'It was not possible to load the loan data. Please try again later.';
         this.isLoading = false;
       }
     });
