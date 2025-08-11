@@ -53,7 +53,8 @@ function toISODate(dateString: string | null | undefined): string {
     MatTableModule,
     MatProgressSpinnerModule,
     MatCardModule,
-    MatIconModule
+    MatIconModule,
+    DatePipe
   ],
   templateUrl: './loan-calculator-component.html',
   styleUrl: './loan-calculator-component.css'
